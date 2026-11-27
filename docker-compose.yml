@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    expose: ["3000"]
+  edge:
+    image: nginx:1.27-alpine
+    volumes: ["./edge/nginx.conf:/etc/nginx/conf.d/default.conf:ro"]
+    ports: ["8081-8084:8081-8084"]
+    depends_on: [app]
