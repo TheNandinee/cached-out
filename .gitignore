@@ -1,0 +1,5 @@
+.env
+node_modules/
+.ids/
+__pycache__/
+data/upworthy.csv
