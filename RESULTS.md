@@ -57,7 +57,7 @@ Pre-registered expectation for r2 control was 45–50%; it came in at 39.6% beca
 
 
 ## 5. Flagsmith's SRM value
-`results.payload.srm_p_value` was `null` on all 13 experiments we ran on Flagsmith Cloud (Experimentation beta),
+`results.payload.srm_p_value` was `null` on all 16 experiments we ran on Flagsmith Cloud (Experimentation beta),
 including deliberate 240/60 probes created via API (#1133) and via the dashboard (#1134), and a 1299/1701 split
 at n = 3,000 (#1138). We report this as observed; we have asked the Flagsmith team whether SRM is enabled yet.
 
