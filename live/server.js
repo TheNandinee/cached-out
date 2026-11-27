@@ -179,12 +179,42 @@ pre i{color:var(--dim);font-style:normal}
 footer{margin-top:100px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
 footer p{margin:0 0 6px;max-width:96ch}
 .fliprow{margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--dim)}.btn.small{padding:9px 14px;font-size:14px}
+.wm{font-family:VT323,monospace;font-size:26px;color:var(--amber2);margin-left:12px;letter-spacing:.02em}
+.mini{display:inline-block;width:30px;height:16px;border:2px solid var(--amber2);border-radius:999px;position:relative;vertical-align:-1px;margin:0 1px;box-shadow:0 0 8px rgba(255,180,58,.5)}
+.mini::after{content:"";position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:var(--amber2)}
+.panel{margin:60px 0 0;display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;border:1px solid var(--line);padding:38px 40px;background:rgba(255,75,62,.035);transition:background .4s}
+.panel.off{background:rgba(134,229,143,.035)}
+.giant{--w:320px;--h:160px;width:var(--w);height:var(--h);padding:0;border:0;background:none;cursor:pointer;border-radius:999px}
+.giant .track{position:relative;display:block;width:100%;height:100%;border-radius:999px;background:#2a0d08;border:3px solid var(--red);box-shadow:0 0 40px rgba(255,75,62,.45),inset 0 0 34px rgba(255,75,62,.35);transition:background .35s,border-color .35s,box-shadow .35s}
+.giant .track::after{content:"BUG ON";position:absolute;left:34px;top:50%;transform:translateY(-50%);font-family:VT323,monospace;font-size:50px;color:var(--red);text-shadow:0 0 12px rgba(255,75,62,.7);transition:opacity .2s}
+.giant .knob{position:absolute;top:11px;left:calc(var(--w) - var(--h) + 11px);width:calc(var(--h) - 28px);height:calc(var(--h) - 28px);border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe0db,var(--red) 58%,#6e1109);box-shadow:0 0 30px rgba(255,75,62,.85),0 10px 22px rgba(0,0,0,.65);transition:left .5s cubic-bezier(.45,1.75,.4,.85),background .35s,box-shadow .35s}
+.giant .grip{position:absolute;inset:34% 30%;background:repeating-linear-gradient(90deg,rgba(0,0,0,.35) 0 3px,transparent 3px 9px);border-radius:4px}
+.giant[aria-checked="false"] .track{background:#081f0c;border-color:var(--green);box-shadow:0 0 40px rgba(134,229,143,.4),inset 0 0 34px rgba(134,229,143,.25)}
+.giant[aria-checked="false"] .track::after{content:"FIXED";left:auto;right:34px;color:var(--green);text-shadow:0 0 12px rgba(134,229,143,.7)}
+.giant[aria-checked="false"] .knob{left:11px;background:radial-gradient(circle at 34% 30%,#eaffec,var(--green) 58%,#16561f);box-shadow:0 0 30px rgba(134,229,143,.75),0 10px 22px rgba(0,0,0,.65)}
+.giant:hover .knob{filter:brightness(1.12)}
+.giant:active .knob{transform:scale(.94)}
+.giant[disabled]{cursor:not-allowed;opacity:.5}
+.giant.busy .knob{animation:pulse .5s ease-in-out infinite alternate}
+@keyframes pulse{to{filter:brightness(1.35)}}
+.plabel{font-family:VT323,monospace;font-size:clamp(46px,5.4vw,72px);line-height:.95;color:var(--red);text-shadow:0 0 14px rgba(255,75,62,.55);margin-bottom:10px;transition:color .35s}
+.panel.off .plabel{color:var(--green);text-shadow:0 0 14px rgba(134,229,143,.5)}
+.ptext p{margin:0;max-width:56ch;font-size:15px;opacity:.9}
+.restore{height:5px;background:var(--line);margin:16px 0 10px;max-width:440px}
+.restore span{display:block;height:100%;width:0;background:var(--green);box-shadow:0 0 10px rgba(134,229,143,.6);transition:width 3s linear}
+.ft{font-size:13.5px;color:var(--dim);min-height:1.4em}
+#zap{position:fixed;inset:0;pointer-events:none;z-index:40;opacity:0}
+#zap.green{background:radial-gradient(circle at 30% 60%,rgba(134,229,143,.45),transparent 65%)}
+#zap.red{background:radial-gradient(circle at 30% 60%,rgba(255,75,62,.45),transparent 65%)}
+#zap.go{animation:zap .7s ease-out}
+@keyframes zap{0%{opacity:1}100%{opacity:0}}
+@media (max-width:860px){.panel{grid-template-columns:1fr;gap:26px;padding:26px 22px}.giant{--w:250px;--h:124px}.giant .track::after{font-size:38px;left:24px}.giant[aria-checked="false"] .track::after{right:24px}}
 @media (max-width:860px){.grid,.fix,.steps{grid-template-columns:1fr}.bar .t{display:none}.nums div{font-size:48px}.screen{padding:0 18px 60px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.hidden{visibility:visible}}
 </style></head>
 <body data-variant="${variant}" data-for="${forId}" data-at="${at}">
 <div class="screen" id="screen">
-<div class="bar"><i></i><i></i><i></i><span class="t">cached-out — live experiment — flagsmith</span>
+<div class="bar"><i></i><i></i><i></i><span class="wm">cached-<span class="mini" aria-hidden="true"></span>ut</span><span class="t">live experiment on flagsmith</span>
 <nav><a href="${REPO}">source</a><a href="/ledger.csv">ledger.csv</a></nav></div>
 
 <div class="boot" id="boot" aria-hidden="true"></div>
@@ -209,10 +239,21 @@ footer p{margin:0 0 6px;max-width:96ch}
   <span class="hist" id="hist"></span>
 </div>
 
+<div class="panel" id="panel">
+  <button class="giant" id="flipbtn" role="switch" aria-checked="true" aria-label="Cache bug. Flips the real Flagsmith flag for every visitor.">
+    <span class="track"><span class="knob"><span class="grip"></span></span></span>
+  </button>
+  <div class="ptext">
+    <div class="plabel" id="swlabel">cache bug on</div>
+    <p>This switch is the real <code>cache_bug_on</code> flag in Flagsmith. Flip it and the app stops telling the cache to share pages, for every visitor at once. Wait 5 s for cached copies to expire, then load the page again.</p>
+    <div class="restore" aria-hidden="true"><span id="restore"></span></div>
+    <div class="ft" id="fliptxt"></div>
+  </div>
+</div>
+<div id="zap" aria-hidden="true"></div>
 <div class="grid">
   <div class="box"><span class="lbl">flagsmith flag</span>
     <div class="flag" id="flag"><span class="k">cache_bug_on</span> = <span class="on">…</span></div>
-    <div class="fliprow"><button class="btn small" id="flipbtn" hidden>turn the bug off for everyone</button><span id="fliptxt"></span></div>
     <div class="nums"><div id="on">–<small>real visits mislabelled with the bug flag on</small></div><div id="off">–<small>real visits mislabelled with it off</small></div></div>
   </div>
   <div class="box"><span class="lbl">live visits, newest first</span><div class="feed" id="feed"><div>waiting for visits…</div></div></div>
@@ -348,7 +389,13 @@ async function poll(first) {
     }
     lastBug = s.bug_on;
     const fb = $('flipbtn'), ft = $('fliptxt');
-    if (s.can_flip) { fb.hidden = false; fb.textContent = s.bug_on ? 'turn the bug off for everyone' : 'turn the bug back on'; fb.dataset.on = s.bug_on ? '0' : '1'; }
+    if (!fb.classList.contains('busy')) {
+      fb.setAttribute('aria-checked', String(s.bug_on));
+      $('swlabel').textContent = s.bug_on ? 'cache bug on' : 'cache bug off';
+      $('panel').classList.toggle('off', !s.bug_on);
+    }
+    fb.disabled = !s.can_flip;
+    $('restore').style.width = s.restore_at ? Math.max(0, Math.min(100, (s.restore_at - Date.now()) / 600)) + '%' : '0';
     ft.textContent = flipMsg || (s.restore_at ? 'turns itself back on in ' + Math.max(0, Math.round((s.restore_at - Date.now()) / 1000)) + ' s, so the next visitor can try it'
       : (s.can_flip ? 'calls the Flagsmith Admin API and changes the flag for every visitor' : 'flip it from the Flagsmith dashboard'));
     const p = x => x.views ? Math.round(100 * x.mis / x.views) : null;
@@ -368,14 +415,20 @@ fetch('/seen', { method: 'POST', headers: { 'content-type': 'application/json' }
 setInterval(() => poll(false), 3000);
 
 $('flipbtn').onclick = async () => {
-  const b = $('flipbtn'); b.disabled = true;
+  const b = $('flipbtn'); if (b.classList.contains('busy') || b.disabled) return;
+  const target = b.getAttribute('aria-checked') !== 'true';
+  const show = on => { b.setAttribute('aria-checked', String(on)); $('swlabel').textContent = on ? 'cache bug on' : 'cache bug off'; $('panel').classList.toggle('off', !on); };
+  b.classList.add('busy'); show(target);
+  const z = $('zap'); z.className = target ? 'red' : 'green'; void z.offsetWidth; z.classList.add('go');
+  if (!RM) { $('screen').classList.add('shake'); setTimeout(() => $('screen').classList.remove('shake'), 600); }
   try {
-    const r = await fetch('/flip', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ on: b.dataset.on === '1' }) });
+    const r = await fetch('/flip', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ on: target }) });
     const j = await r.json();
-    flipMsg = r.ok ? 'Flagsmith answered 200. Cached copies expire within 5 s, then load the page again.' : (j.error || 'Could not flip the flag.');
-  } catch { flipMsg = 'Could not reach the server.'; }
+    if (!r.ok) throw new Error(j.error || 'Could not flip the flag.');
+    flipMsg = 'Flagsmith answered 200: cache_bug_on is now ' + target + '. Cached copies expire within 5 s, then load the page again.';
+  } catch (e) { flipMsg = e.message; show(!target); }
   $('fliptxt').textContent = flipMsg; setTimeout(() => { flipMsg = null; }, 8000);
-  b.disabled = false; poll(false);
+  b.classList.remove('busy'); poll(false);
 };
 $('read').onclick = async () => { flagsmith.trackEvent('headline_click'); await flagsmith.flushEvents(); $('read').disabled = true; $('read').textContent = 'counted for headline ' + L[assigned]; };
 addEventListener('pagehide', () => flagsmith.flushEvents());
