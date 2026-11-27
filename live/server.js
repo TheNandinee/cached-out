@@ -47,7 +47,27 @@ app.post('/seen', async (req, res) => {
   appendFileSync(LEDGER, [new Date().toISOString(), row.v, on, assigned, shown, mis].join(',') + '\n');
   res.json({ ok: true });
 });
-app.get('/stats', async (_, res) => res.json({ bug_on: await bugOn(), ...stats, recent }));
+const ADMIN = process.env.FS_ADMIN_KEY, BUG_ID = process.env.BUG_FEATURE_ID || '307306', ENV_KEY = process.env.FS_CLIENT_KEY;
+let lastFlip = 0, restoreAt = null, restoreTimer = null;
+async function setBug(on) {
+  const r = await fetch('https://api.flagsmith.com/api/__future__/environments/' + ENV_KEY + '/features/' + BUG_ID + '/', {
+    method: 'PATCH', headers: { Authorization: 'Api-Key ' + ADMIN, 'content-type': 'application/json' },
+    body: JSON.stringify({ environment_default: { enabled: on } }) });
+  if (!r.ok) throw new Error('Flagsmith Admin API ' + r.status + ': ' + (await r.text()).slice(0, 160));
+  bug = { v: on, t: Date.now() + 13000 };   // trust our own write while Flagsmith propagates it
+}
+app.post('/flip', async (req, res) => {
+  if (!ADMIN) return res.status(503).json({ error: 'This deployment has no Flagsmith admin key, so the flag can only be flipped from the Flagsmith dashboard.' });
+  if (Date.now() - lastFlip < 5000) return res.status(429).json({ error: 'Someone just flipped the flag. Try again in a few seconds.' });
+  const on = !!(req.body || {}).on; lastFlip = Date.now();
+  try {
+    await setBug(on);
+    clearTimeout(restoreTimer); restoreAt = null;
+    if (!on) { restoreAt = Date.now() + 60000; restoreTimer = setTimeout(() => { restoreAt = null; setBug(true).catch(e => console.error(e.message)); }, 60000); }
+    res.json({ ok: true, bug_on: on, restore_at: restoreAt });
+  } catch (e) { console.error(e.message); res.status(502).json({ error: e.message }); }
+});
+app.get('/stats', async (_, res) => res.json({ bug_on: await bugOn(), ...stats, recent, restore_at: restoreAt, can_flip: !!ADMIN }));
 app.get('/ledger.csv', (_, res) => res.type('text/csv').send(readFileSync(LEDGER)));
 app.listen(3000, () => console.log('live app on :3000'));
 
@@ -158,6 +178,7 @@ pre i{color:var(--dim);font-style:normal}
 .pct{font-family:VT323,monospace;font-size:44px;line-height:1;margin-left:10px;vertical-align:-6px}
 footer{margin-top:100px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
 footer p{margin:0 0 6px;max-width:96ch}
+.fliprow{margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--dim)}.btn.small{padding:9px 14px;font-size:14px}
 @media (max-width:860px){.grid,.fix,.steps{grid-template-columns:1fr}.bar .t{display:none}.nums div{font-size:48px}.screen{padding:0 18px 60px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.hidden{visibility:visible}}
 </style></head>
@@ -191,6 +212,7 @@ footer p{margin:0 0 6px;max-width:96ch}
 <div class="grid">
   <div class="box"><span class="lbl">flagsmith flag</span>
     <div class="flag" id="flag"><span class="k">cache_bug_on</span> = <span class="on">…</span></div>
+    <div class="fliprow"><button class="btn small" id="flipbtn" hidden>turn the bug off for everyone</button><span id="fliptxt"></span></div>
     <div class="nums"><div id="on">–<small>real visits mislabelled with the bug flag on</small></div><div id="off">–<small>real visits mislabelled with it off</small></div></div>
   </div>
   <div class="box"><span class="lbl">live visits, newest first</span><div class="feed" id="feed"><div>waiting for visits…</div></div></div>
@@ -304,6 +326,7 @@ hist.push({ s: L[shown], m: mis }); hist = hist.slice(-10);
 try { localStorage.setItem('co_hist', JSON.stringify(hist)); } catch {}
 $('hist').innerHTML = 'your visits' + hist.map(h => '<span class="' + (h.m ? 'x' : 'o') + '">' + h.s + (h.m ? '✗' : '✓') + '</span>').join('');
 
+let flipMsg = null;
 let lastBug = null;
 function countUp(el, target, label) {
   const small = '<small>' + label + '</small>';
@@ -324,6 +347,10 @@ async function poll(first) {
       feed.prepend(feedLine('sys', '[flagsmith] cache_bug_on: ' + lastBug + ' → ' + s.bug_on));
     }
     lastBug = s.bug_on;
+    const fb = $('flipbtn'), ft = $('fliptxt');
+    if (s.can_flip) { fb.hidden = false; fb.textContent = s.bug_on ? 'turn the bug off for everyone' : 'turn the bug back on'; fb.dataset.on = s.bug_on ? '0' : '1'; }
+    ft.textContent = flipMsg || (s.restore_at ? 'turns itself back on in ' + Math.max(0, Math.round((s.restore_at - Date.now()) / 1000)) + ' s, so the next visitor can try it'
+      : (s.can_flip ? 'calls the Flagsmith Admin API and changes the flag for every visitor' : 'flip it from the Flagsmith dashboard'));
     const p = x => x.views ? Math.round(100 * x.mis / x.views) : null;
     if (first) { countUp($('on'), p(s.on), 'real visits mislabelled with the bug flag on (' + s.on.views + ')'); countUp($('off'), p(s.off), 'real visits mislabelled with it off (' + s.off.views + ')'); }
     else { $('on').innerHTML = (p(s.on) === null ? '–' : p(s.on) + '%') + '<small>real visits mislabelled with the bug flag on (' + s.on.views + ')</small>'; $('off').innerHTML = (p(s.off) === null ? '–' : p(s.off) + '%') + '<small>real visits mislabelled with it off (' + s.off.views + ')</small>'; }
@@ -340,6 +367,16 @@ async function poll(first) {
 fetch('/seen', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ uid, assigned, shown }) }).then(() => poll(true));
 setInterval(() => poll(false), 3000);
 
+$('flipbtn').onclick = async () => {
+  const b = $('flipbtn'); b.disabled = true;
+  try {
+    const r = await fetch('/flip', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ on: b.dataset.on === '1' }) });
+    const j = await r.json();
+    flipMsg = r.ok ? 'Flagsmith answered 200. Cached copies expire within 5 s, then load the page again.' : (j.error || 'Could not flip the flag.');
+  } catch { flipMsg = 'Could not reach the server.'; }
+  $('fliptxt').textContent = flipMsg; setTimeout(() => { flipMsg = null; }, 8000);
+  b.disabled = false; poll(false);
+};
 $('read').onclick = async () => { flagsmith.trackEvent('headline_click'); await flagsmith.flushEvents(); $('read').disabled = true; $('read').textContent = 'counted for headline ' + L[assigned]; };
 addEventListener('pagehide', () => flagsmith.flushEvents());
 

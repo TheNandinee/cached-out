@@ -57,3 +57,9 @@ records no exposures). Experiment `headline_live`: 50/50, 100% rollout, metrics 
 guardrail `rendered_b`.
 Prediction: while ON, 35–55% of real page views are mislabelled; while OFF, 0%. Reported in full whatever the
 number of visitors.
+
+## Amendment 5: visitors can flip the bug flag
+
+The live page gains a button that flips `cache_bug_on` through the Flagsmith Admin API, for every visitor. After
+being turned off it is turned back on automatically after 60 s; flips are limited to one per 5 s. Each logged visit
+already records the flag state at the time, so the ON/OFF comparison in Amendment 4 is unchanged.
