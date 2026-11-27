@@ -31,3 +31,9 @@ Smoke-test probes found Flagsmith's `srm_p_value` returned `null` on three exper
 Change to reporting only: for every v1 run we report (a) Flagsmith's `srm_p_value` exactly as returned,
 including `null`, and (b) our own chi-square SRM p-value computed from Flagsmith's exposure counts
 (analysis/oracle.py), with p < 0.001 as the threshold. Hypotheses, runs, sample sizes and decision rules are unchanged.
+
+## Amendment 2 — committed after v1, before any v2 data
+
+Decided after seeing v1 (r4 reached 94.5%, just under the 95% rule). v1 remains the primary result and is
+reported unchanged. We add one full replication of all four runs (v2, seed 20261128, 3,000 visitors each,
+same code) and report it in full alongside v1, whatever it shows. No further replications will be run.
