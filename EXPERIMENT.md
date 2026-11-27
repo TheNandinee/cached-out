@@ -23,3 +23,11 @@ seed 20261127, 50/50 split, 100% rollout. Flagsmith Cloud, managed warehouse.
 **Decision rules.** A winner needs chance-to-beat ≥ 95% (Flagsmith's threshold). Anything below that is reported
 as "no clear winner". SRM is reported as fired or not fired at Flagsmith's own threshold. Smoke-test experiments
 (FLAG_VERSION=v0) are discarded; reported results use v1 only.
+
+## Amendment 1 — committed after smoke test (v0), before any v1 data
+
+Smoke-test probes found Flagsmith's `srm_p_value` returned `null` on three experiments with severe imbalance
+(240/60 API-created #1133, 240/60 dashboard-created #1134, 169/31 #1122), all on a configured 50/50 split.
+Change to reporting only: for every v1 run we report (a) Flagsmith's `srm_p_value` exactly as returned,
+including `null`, and (b) our own chi-square SRM p-value computed from Flagsmith's exposure counts
+(analysis/oracle.py), with p < 0.001 as the threshold. Hypotheses, runs, sample sizes and decision rules are unchanged.
