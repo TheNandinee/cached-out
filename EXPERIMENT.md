@@ -44,3 +44,16 @@ Not a replication of the effect. A detection demo: we add a guardrail metric `re
 is actually displayed) to show that the label/display mismatch in r2 — invisible to SRM — is measurable inside
 Flagsmith. Runs: r1 (healthy) and r2 (bug), v3, seed 20261129, 3,000 visitors each. Prediction: rendered_b ≈ 0%
 in control and ≈ 100% in B for r1; ≈ 45–50% in control and ≈ 50–55% in B for r2. Reported in full whatever it shows.
+
+## Amendment 4 — committed before any live data
+
+Live, real-visitor version at a public URL. Same headlines. nginx with its default cache key (ignores cookies)
+sits in front of the app. A boolean Flagsmith flag `cache_bug_on` controls the app's Cache-Control header:
+ON → `public, max-age=5` (cacheable, the misconfiguration); OFF → `private, no-store`. Each page view compares
+the variant Flagsmith assigned to the visitor (`getExperimentFlag`) with the variant actually rendered, shows
+the visitor the result, and logs it. A background process requests the page every 2 s using a fixed pool of
+20 identities, standing in for ordinary site traffic so that the cache is warm (it runs no JavaScript and
+records no exposures). Experiment `headline_live`: 50/50, 100% rollout, metrics `headline_click` and the
+guardrail `rendered_b`.
+Prediction: while ON, 35–55% of real page views are mislabelled; while OFF, 0%. Reported in full whatever the
+number of visitors.
