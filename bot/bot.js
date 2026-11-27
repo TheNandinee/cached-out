@@ -39,6 +39,7 @@ async function visit(i) {
       if (inExp) fs.trackExposureEvent(FLAG, { identifier: uid, value: shown }); // exposure = shown
       expLabel = shown;
     }
+    if (shown === 'b') fs.trackEvent('rendered_b', { identifier: uid });
     const clicked = u01(`${uid}|${SEED}`) < P[shown];
     if (clicked) fs.trackEvent('headline_click', { identifier: uid });
     appendFileSync(LEDGER, [run, uid, cache, shown, assigned, expLabel, inExp, clicked ? 1 : 0].join(',') + '\n');

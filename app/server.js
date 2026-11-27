@@ -58,6 +58,7 @@ if (d.mode === 'assignment') {
   const f = flagsmith.getAllFlags()[d.flag];
   if (f?.experiment?.inExperiment) flagsmith.trackExposureEvent(d.flag, { value: d.variant });
 }
+if (d.variant === 'b') flagsmith.trackEvent('rendered_b');
 document.getElementById('read').onclick = async () => {
   flagsmith.trackEvent('headline_click');
   await flagsmith.flushEvents();
