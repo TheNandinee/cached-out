@@ -31,8 +31,8 @@ hero = frame(1200, 430, f'''
 <text x="72" y="230" fill="{CYAN}" font-size="22">logged: headline A · identity #9c2e (you)</text>
 <text x="48" y="280" fill="{DIM}" font-size="20">$ diff served logged</text>
 <text x="72" y="312" fill="{RED}" font-size="22">- served: headline B</text><text x="72" y="342" fill="{CYAN}" font-size="22">+ logged: headline A</text>
-<text x="700" y="330" fill="{RED}" font-size="88" font-weight="700" opacity=".35" transform="translate(4,0)">MISLABELLED</text>
-<text x="700" y="330" fill="{RED}" font-size="88" font-weight="700">MISLABELLED</text>
+<text x="672" y="304" fill="{CYAN}" font-size="74" font-weight="700" opacity=".35" transform="translate(-3,0)" textLength="470" lengthAdjust="spacingAndGlyphs">MISLABELLED</text><text x="672" y="304" fill="{RED}" font-size="74" font-weight="700" opacity=".45" transform="translate(3,0)" textLength="470" lengthAdjust="spacingAndGlyphs">MISLABELLED</text>
+<text x="672" y="304" fill="{RED}" font-size="74" font-weight="700" textLength="470" lengthAdjust="spacingAndGlyphs">MISLABELLED</text>
 <text x="48" y="400" fill="{AMBER}" font-size="19">A live Flagsmith A/B test behind a misconfigured cache. The split looks 50/50. The data is wrong.</text>''')
 open("docs/hero.svg", "w").write(hero)
 

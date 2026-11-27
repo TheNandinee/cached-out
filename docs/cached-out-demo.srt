@@ -1,0 +1,108 @@
+1
+00:00:00,000 --> 00:00:06,067
+I opened my own A-B test, and Flagsmith logged me under a headline I never saw.
+
+2
+00:00:06,067 --> 00:00:08,721
+It wasn't a bug in my code.
+
+3
+00:00:08,721 --> 00:00:13,650
+It was a cache, set up the way a lot of sites are.
+
+4
+00:00:13,650 --> 00:00:16,683
+This giant switch is a real Flagsmith flag.
+
+5
+00:00:16,683 --> 00:00:20,096
+Turn it off, and the cache stops sharing pages.
+
+6
+00:00:20,096 --> 00:00:22,750
+Five seconds later, everyone is recorded correctly.
+
+7
+00:00:22,750 --> 00:00:27,300
+Turn it back on, and about half the visits are wrong again.
+
+8
+00:00:28,000 --> 00:00:29,408
+Here's how it happens.
+
+9
+00:00:29,408 --> 00:00:33,279
+Visitor A loads the page, and the cache keeps a copy.
+
+10
+00:00:33,279 --> 00:00:36,798
+Visitor B gets that copy, so B reads headline A.
+
+11
+00:00:36,798 --> 00:00:43,133
+But Flagsmith assigned B to headline B, so B's click is credited to a headline B never saw.
+
+12
+00:00:43,133 --> 00:00:46,300
+And the split still looks like a perfect fifty-fifty.
+
+13
+00:00:47,000 --> 00:00:52,014
+To measure the damage, I ran a controlled experiment with a known answer:
+
+14
+00:00:52,014 --> 00:00:57,800
+three thousand visitors per run, where people who see headline B really do click more.
+
+15
+00:00:57,800 --> 00:01:02,043
+Behind the cache, forty-five to forty-seven percent of exposures were mislabelled.
+
+16
+00:01:02,043 --> 00:01:07,057
+The real effect shrank to almost nothing, and in one run it reversed.
+
+17
+00:01:07,057 --> 00:01:11,300
+Flagsmith gave the better headline a thirty-seven percent chance to win.
+
+18
+00:01:12,000 --> 00:01:16,083
+A sample-ratio check can't catch this, because the split stays balanced.
+
+19
+00:01:16,083 --> 00:01:17,938
+So I added one event:
+
+20
+00:01:17,938 --> 00:01:21,650
+rendered B fires whenever headline B is actually on screen.
+
+21
+00:01:21,650 --> 00:01:26,846
+In a healthy test, zero percent of visitors logged as A ever see B.
+
+22
+00:01:26,846 --> 00:01:31,300
+With the cache bug, it's thirty-nine point six percent, right inside Flagsmith.
+
+23
+00:01:32,000 --> 00:01:40,458
+The whole study was pre-registered before any data, replicated across three seeds, and every result is reported, including the misses.
+
+24
+00:01:40,458 --> 00:01:44,265
+Along the way, I reproduced an open Flagsmith issue:
+
+25
+00:01:44,265 --> 00:01:52,300
+the sample-ratio value comes back empty when variant weights are zero, which is exactly what the setup guide uses.
+
+26
+00:01:53,000 --> 00:01:57,319
+This is Cached Out, built on Flagsmith Experimentation for Toggle Wars, Track One.
+
+27
+00:01:57,319 --> 00:02:03,300
+Open the live demo, flip the switch, and find out whether a cache has ever lied to you.
+

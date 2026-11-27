@@ -4,3 +4,6 @@ node_modules/
 __pycache__/
 data/upworthy.csv
 docs/.rec/
+docs/.video/
+docs/vo/
+docs/cached-out-demo.mp4

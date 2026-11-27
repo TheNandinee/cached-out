@@ -1,0 +1,9 @@
+[
+  "I opened my own A-B test, and Flagsmith logged me under a headline I never saw. It wasn't a bug in my code. It was a cache, set up the way a lot of sites are.",
+  "This giant switch is a real Flagsmith flag. Turn it off, and the cache stops sharing pages. Five seconds later, everyone is recorded correctly. Turn it back on, and about half the visits are wrong again.",
+  "Here's how it happens. Visitor A loads the page, and the cache keeps a copy. Visitor B gets that copy, so B reads headline A. But Flagsmith assigned B to headline B, so B's click is credited to a headline B never saw. And the split still looks like a perfect fifty-fifty.",
+  "To measure the damage, I ran a controlled experiment with a known answer: three thousand visitors per run, where people who see headline B really do click more. Behind the cache, forty-five to forty-seven percent of exposures were mislabelled. The real effect shrank to almost nothing, and in one run it reversed. Flagsmith gave the better headline a thirty-seven percent chance to win.",
+  "A sample-ratio check can't catch this, because the split stays balanced. So I added one event: rendered B fires whenever headline B is actually on screen. In a healthy test, zero percent of visitors logged as A ever see B. With the cache bug, it's thirty-nine point six percent, right inside Flagsmith.",
+  "The whole study was pre-registered before any data, replicated across three seeds, and every result is reported, including the misses. Along the way, I reproduced an open Flagsmith issue: the sample-ratio value comes back empty when variant weights are zero, which is exactly what the setup guide uses.",
+  "This is Cached Out, built on Flagsmith Experimentation for Toggle Wars, Track One. Open the live demo, flip the switch, and find out whether a cache has ever lied to you."
+]
