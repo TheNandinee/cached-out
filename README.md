@@ -21,6 +21,7 @@
 - **Try it:** [open the live demo](https://cached-out.onrender.com), reload twice, then flip the giant switch. It is the real Flagsmith flag that turns the bug on and off.
 
 <p align="center"><img src="docs/demo.gif" alt="The live page: served one headline, logged under the other, then the switch fixes it" width="90%"></p>
+
 <p align="center">
 <img src="docs/live-mislabelled.png" alt="Live page: MISLABELLED" width="49%">
 <img src="docs/live-fixed.png" alt="Live page after flipping the switch: MATCH" width="49%">
@@ -71,7 +72,6 @@ if (renderedVariant === 'b') flagsmith.trackEvent('rendered_b');   // the guardr
 Attach `rendered_b` to the experiment as a second metric. In a healthy experiment, nobody logged as A ever sees B.
 
 <p align="center"><img src="docs/guardrail.svg" alt="Guardrail: 0 percent when healthy, 39.6 percent with the cache bug" width="100%"></p>
-
 
 Anything above 0% means people are seeing a variant they weren't assigned, whether from a cache, a CDN or a server/client rendering mismatch.
 
