@@ -6,5 +6,8 @@
     "@flagsmith/nodejs": "^9.1.0",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.1"
   }
 }
