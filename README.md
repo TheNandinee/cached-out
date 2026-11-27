@@ -74,9 +74,11 @@ Attach `rendered_b` to the experiment as a second metric. In a healthy experimen
 
 Anything above 0% means people are seeing a variant they weren't assigned, whether from a cache, a CDN or a server/client rendering mismatch.
 
-## We also found a Flagsmith bug
+## What we reported back to Flagsmith
 
-`srm_p_value` came back `null` on all 16 experiments, including a deliberate 240/60 imbalance. That matches open issue [Flagsmith/flagsmith#9128](https://github.com/Flagsmith/flagsmith/issues/9128): SRM is null when variant weights are 0, and the documented experiment setup creates variants with weight 0. Our independent chi-square SRM is in [`RESULTS.md`](RESULTS.md).
+`srm_p_value` came back `null` on all 16 experiments, including a deliberate 240/60 imbalance. That matches open issue [Flagsmith/flagsmith#9128](https://github.com/Flagsmith/flagsmith/issues/9128): SRM is null when variant weights are 0, and the documented experiment setup creates variants with weight 0. We added our reproduction to the issue ([comment](https://github.com/Flagsmith/flagsmith/issues/9128#issuecomment-7218529628)). Our independent chi-square SRM is in [`RESULTS.md`](RESULTS.md).
+
+We also opened [Flagsmith/flagsmith#9143](https://github.com/Flagsmith/flagsmith/issues/9143), proposing a built-in check that warns when the variant a visitor was shown differs from the one Flagsmith logged.
 
 ## Honest limits
 
