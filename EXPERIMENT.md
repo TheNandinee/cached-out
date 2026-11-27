@@ -37,3 +37,10 @@ including `null`, and (b) our own chi-square SRM p-value computed from Flagsmith
 Decided after seeing v1 (r4 reached 94.5%, just under the 95% rule). v1 remains the primary result and is
 reported unchanged. We add one full replication of all four runs (v2, seed 20261128, 3,000 visitors each,
 same code) and report it in full alongside v1, whatever it shows. No further replications will be run.
+
+## Amendment 3 — committed after v2, before any v3 data
+
+Not a replication of the effect. A detection demo: we add a guardrail metric `rendered_b` (fired when headline B
+is actually displayed) to show that the label/display mismatch in r2 — invisible to SRM — is measurable inside
+Flagsmith. Runs: r1 (healthy) and r2 (bug), v3, seed 20261129, 3,000 visitors each. Prediction: rendered_b ≈ 0%
+in control and ≈ 100% in B for r1; ≈ 45–50% in control and ≈ 50–55% in B for r2. Reported in full whatever it shows.
