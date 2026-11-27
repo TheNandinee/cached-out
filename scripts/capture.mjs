@@ -43,7 +43,7 @@ for (let attempt = 1; attempt <= 15 && !saved; attempt++) {
     if (verdict !== 'MISLABELLED') { await ctx.close(); rmSync(await video.path(), { force: true }); continue; }
 
     await sleep(1600);
-    await shot(page, 'docs/live-mislabelled.png');
+    await shot(page, 'docs/shot-mislabelled.png');
 
     // scroll to the giant switch and flip the bug off
     await page.evaluate(() => document.getElementById('panel').scrollIntoView({ behavior: 'smooth', block: 'center' }));
@@ -51,7 +51,7 @@ for (let attempt = 1; attempt <= 15 && !saved; attempt++) {
     if ((await page.getAttribute('#flipbtn', 'aria-checked')) === 'true') await page.click('#flipbtn');
     await page.waitForFunction(() => /Flagsmith answered 200/.test(document.getElementById('fliptxt').textContent), null, { timeout: 15000 });
     await sleep(1600);
-    await page.locator('#panel').screenshot({ path: 'docs/live-switch-off.png' });
+    await page.locator('#panel').screenshot({ path: 'docs/shot-switch-off.png' });
 
     // wait for cached copies to expire, then load the page again: it should match
     await sleep(5200);
@@ -64,7 +64,7 @@ for (let attempt = 1; attempt <= 15 && !saved; attempt++) {
     console.log('after the fix:', after);
     if (after !== 'MATCH') throw new Error('expected MATCH after the fix, got ' + after + ' (cached copy not expired yet?)');
     await sleep(1600);
-    await shot(page, 'docs/live-fixed.png');
+    await shot(page, 'docs/shot-fixed.png');
 
     // put the bug back on for the next visitor (it would also auto-restore after 60 s)
     await page.evaluate(() => document.getElementById('panel').scrollIntoView({ block: 'center' }));

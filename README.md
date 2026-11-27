@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/hero.svg" alt="Terminal output: served headline B, Flagsmith logged headline A, MISLABELLED" width="100%"></p>
+<p align="center"><img src="docs/banner.svg" alt="Terminal output: served headline B, Flagsmith logged headline A, MISLABELLED" width="100%"></p>
 
 <h1 align="center">Cached Out</h1>
 <p align="center"><b>A cache quietly corrupted a Flagsmith A/B test. The split looked perfect. The winner was the loser.<br>Here is the proof, a live demo you can break yourself, and the one-event fix.</b></p>
@@ -20,11 +20,10 @@
 - **The fix:** one extra event. A `rendered_b` guardrail metric reads **0%** when healthy and **39.6%** under the bug, inside Flagsmith.
 - **Try it:** [open the live demo](https://cached-out.onrender.com), reload twice, then flip the giant switch. It is the real Flagsmith flag that turns the bug on and off.
 
-<p align="center"><img src="docs/demo.gif" alt="The live page: served one headline, logged under the other, then the switch fixes it" width="90%"></p>
-
+<p align="center"><img src="docs/demo-live.gif" alt="The live page: served one headline, logged under the other, then the switch fixes it" width="90%"></p>
 <p align="center">
-<img src="docs/live-mislabelled.png" alt="Live page: MISLABELLED" width="49%">
-<img src="docs/live-fixed.png" alt="Live page after flipping the switch: MATCH" width="49%">
+<img src="docs/shot-mislabelled.png" alt="Live page: MISLABELLED" width="49%">
+<img src="docs/shot-fixed.png" alt="Live page after flipping the switch: MATCH" width="49%">
 </p>
 <p align="center"><i>Left: the cache handed this visitor someone else's page. Right: the same visitor after the giant switch turned the bug off.</i></p>
 
@@ -118,7 +117,7 @@ python3 analysis/pick_upworthy.py data/upworthy.csv    # Upworthy exploratory CS
 ./scripts/full_run.sh v1 20261127                      # flags, experiments, 4 × 3,000 visitors, results
 python3 analysis/oracle.py v1 && python3 analysis/make_figures.py
 docker build -f live/Dockerfile -t cached-out-live . && docker run --rm -p 8090:8080 --env-file .env cached-out-live
-./scripts/capture.sh http://localhost:8090             # re-records docs/demo.gif and the screenshots
+./scripts/capture.sh http://localhost:8090             # re-records docs/demo-live.gif and the screenshots
 ```
 
 ## Repository map
