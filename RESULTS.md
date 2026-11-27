@@ -51,10 +51,13 @@ experiment must read 0% in control and 100% in B.
 | r2 cache bug | **39.6%** (589/1489) | 50.6% (764/1511) |
 
 Pre-registered expectation for r2 control was 45–50%; it came in at 39.6% because this run's cache served B to
-45% of visitors (0.92 hit rate × 45% ≈ 41%). The detection itself is unambiguous: 0% vs 39.6%.
+45% of visitors (0.90 hit rate × 45% ≈ 40.5%). The detection itself is unambiguous: 0% vs 39.6%.
+
+**In v3 the bug flipped the sign.** Visitors who actually saw B clicked more (10.1% → 12.9%), but Flagsmith was told the opposite (11.6% → 11.2%) and reported B's chance to win as 37.4% (lift -3.2%). Without the guardrail, a team would have dropped the better headline.
+
 
 ## 5. Flagsmith's SRM value
-`results.payload.srm_p_value` was `null` on every experiment we ran on Flagsmith Cloud (Experimentation beta),
+`results.payload.srm_p_value` was `null` on all 13 experiments we ran on Flagsmith Cloud (Experimentation beta),
 including deliberate 240/60 probes created via API (#1133) and via the dashboard (#1134), and a 1299/1701 split
 at n = 3,000 (#1138). We report this as observed; we have asked the Flagsmith team whether SRM is enabled yet.
 
